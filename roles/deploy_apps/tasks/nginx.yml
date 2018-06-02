@@ -1,0 +1,42 @@
+---
+- name: "Remove default sites-enable vhost"
+  become: True
+  file:
+    path: /etc/nginx/sites-enabled/*
+    state: absent
+
+- name: "Remove default sites-available vhost"
+  become: True
+  file:
+    path: /etc/nginx/sites-available/*
+    state: absent
+
+- name: "Create directory for sources"
+  become: True
+  file:
+    path:   "{{ item }}"
+    state:  directory
+    owner:  "{{ username }}"
+    group:  "{{ username }}"
+    mode:   0755
+  with_items:
+    - /var/log/AIF
+
+- name: "Configure the vhost"
+  become: True
+  template:
+    src:    "nginx_conf.json.j2"
+    dest:   /etc/nginx/sites-available/{{ username }}_vhost.conf
+    owner:  root
+    group:  root
+    mode:   0644
+
+- name: "Enable vhost"
+  become: True
+  file:
+    src:    /etc/nginx/sites-available/{{ username }}_vhost.conf
+    dest:   /etc/nginx/sites-enabled/{{ username }}_vhost.conf
+    owner:  root
+    group:  root
+    state:  link
+  notify: restart nginx

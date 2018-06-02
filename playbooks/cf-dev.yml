@@ -1,0 +1,20 @@
+---
+- hosts: all
+  sudo: no
+  tasks:
+    - name: "Include variables for config files"
+      include_vars: "dev.yml"
+
+- hosts: all
+  sudo: no
+  tasks:
+    - name: "Include system vars"
+      include_vars: "ovh_system_config.yml"
+
+- hosts: all
+  sudo: yes
+  roles:
+    - system_install
+    - website
+    - helpbot
+    - deploy_apps

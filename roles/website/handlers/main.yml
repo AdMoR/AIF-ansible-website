@@ -1,0 +1,13 @@
+---
+# COMMENT
+- name: "restart nginx"
+  become: True
+  service:
+    name:   nginx
+    state:  restarted
+
+#- name: "restart systemctl"
+#  become: True
+#  systemctl:
+#    name:   recommender
+#    state:  restarted

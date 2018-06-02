@@ -1,0 +1,36 @@
+---
+- stat: path="{{ app_dir }}/{{ website_project_name }}"
+  register: repo_exists
+
+- name: "Clone git repo"
+  become_user: "{{ username }}"
+  git:
+    repo: "git@github.com:AdMoR/Alliance_industrie_futur.git"
+    dest: "{{ app_dir }}/{{ website_project_name }}"
+    # TODO : Improve this
+    accept_hostkey: True
+  when: repo_exists.stat.exists == False
+
+- name: "Chmod the git repo"
+  become: "{{ username }}"
+  file:
+    path: "{{ app_dir }}/{{ website_project_name }}"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0777
+
+- name: "Link config_file"
+  become: "{{ username }}"
+  template:
+    src: "env_config.json.j2"
+    dest: "{{ app_dir }}/{{ website_project_name }}/config.json"
+    owner:  "{{ username }}"
+    group:  "{{ username }}"
+    mode:   0644
+
+- name: "Checkout on tag"
+  become: "{{ username }}"
+  shell: git checkout {{ website_tag_version }}
+  args:
+    chdir: "{{ app_dir }}/{{ website_project_name }}"
+  when: repo_exists.stat.exists == False

@@ -1,0 +1,5 @@
+---
+- name: "Setup nginx for the different apps"
+  include: nginx.yml
+  tags:
+    - nginx

@@ -1,0 +1,12 @@
+---
+# Install
+username: amor
+app_dir: /home/amor
+
+website_service: industrie_futur
+helpbot_service: helpbot
+
+website_project_name: Alliance_industrie_futur
+helpbot_project_name: HelpBot
+
+nb_worker: 1

@@ -1,0 +1,19 @@
+[Unit]
+Description=Website daemon
+After=network.target
+
+[Service]
+PIDFile=/run/gunicorn/pid
+User={{ username }}
+Group={{ username }}
+RuntimeDirectory=gunicorn
+WorkingDirectory={{ app_dir }}/{{ helpbot_project_name }}
+ExecStart=/usr/local/bin/gunicorn {{ helpbot_service }}:app --workers {{ nb_worker }} --worker-class=gevent --name {{ helpbot_service }} --bind localhost:5001
+
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

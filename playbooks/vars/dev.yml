@@ -1,0 +1,6 @@
+---
+test_or_live: test
+website_tag_version: master
+helpbot_tag_version: master
+
+slack_token: "XXXXX"

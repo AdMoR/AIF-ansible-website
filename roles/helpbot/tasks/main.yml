@@ -1,0 +1,17 @@
+---
+- name: "Deploy ssh keys"
+  include: ssh_and_files.yml
+  tags:
+    - ssh_deploy
+
+- name: "Git clone"
+  include: git.yml
+  tags:
+    - git
+
+- name: "Deploy the server on systemctl"
+  include: deploy.yml
+  tags:
+    - deploy
+
+
