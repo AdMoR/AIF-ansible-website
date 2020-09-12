@@ -1,0 +1,25 @@
+---
+- name: Install Env Basics
+  become: True
+  apt: pkg={{ item }} state=present update_cache=true
+  with_items:
+    - python3-pip
+    - nginx
+    - systemd
+    - redis-server
+
+- name: "Create normal user"
+  include: create_user.yml
+  tags:
+    - create_user
+
+- name: Install Python Modules
+  become: True
+  shell: pip3 install {{ item }}
+  with_items:
+    - wagtail
+    - pytest
+    - requests
+    - gevent
+    - gunicorn
+    - PyYAML

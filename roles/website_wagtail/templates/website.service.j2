@@ -1,0 +1,19 @@
+[Unit]
+Description=Website daemon
+After=network.target
+
+[Service]
+PIDFile=/run/gunicorn/pid
+User={{ username }}
+Group={{ username }}
+RuntimeDirectory=gunicorn
+WorkingDirectory={{ app_dir }}/{{ project_name }}
+ExecStart=/usr/local/bin/gunicorn {{ gunicorn_service }}.wsgi --workers {{ nb_worker }} --worker-class=gevent --name {{ gunicorn_service }} --log-level INFO --access-logfile - -b localhost:8000 --access-logformat '[Gunicorn:%(p)s] %(h)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
+
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

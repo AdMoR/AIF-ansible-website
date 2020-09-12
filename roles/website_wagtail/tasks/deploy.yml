@@ -1,0 +1,31 @@
+---
+- name: "Add systemd unit"
+  become: True
+  template:
+    src:    "{{ website_service }}.service.j2"
+    dest:   /etc/systemd/system/{{ website_service }}.service
+    owner:  root
+    group:  root
+    mode:   0644
+
+# [Ansible2.0] There is a task to daemon-reload in Ansible 2.2
+- name: "Reload systemd units"
+  become: True
+  shell: "systemctl daemon-reload"
+  register: daemonreload
+  changed_when: "daemonreload.rc != 0"
+
+# [Ansible2.0] Cannot use service module since it will call the init.d part :(
+- name: "Start service"
+  become: True
+  command: "systemctl start {{ website_service }}"
+  register: gunicorn_enable
+  changed_when: "gunicorn_enable.rc != 0"
+
+- name: "Enable service"
+  become: True
+  command: "systemctl enable {{ website_service }}"
+
+- name: "Restart website service"
+  become: True
+  command: "systemctl restart {{ website_service }}"

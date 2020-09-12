@@ -1,0 +1,32 @@
+---
+- stat: path="{{ app_dir }}/{{ website_project_name }}"
+  register: repo_exists
+
+- name: "Clone git repo"
+  become_user: "{{ username }}"
+  git:
+    repo: "https://github.com/AdMoR/wagtail-blog-example.git"
+    dest: "{{ app_dir }}/{{ website_project_name }}"
+    # TODO : Improve this
+    accept_hostkey: True
+  when: repo_exists.stat.exists == False
+
+- name: "Migrate db"
+  become_user: "{{ username }}"
+  shell: 
+    cmd: /usr/bin/python3 manage.py makemigrations
+    chdir: "{{ app_dir }}/{{ website_project_name }}"
+
+- name: "Migrate db 2"
+  become_user: "{{ username }}"
+  shell: 
+    cmd: /usr/bin/python3 manage.py migrate
+    chdir: "{{ app_dir }}/{{ website_project_name }}"
+
+- name: "Chmod the git repo"
+  become: "{{ username }}"
+  file:
+    path: "{{ app_dir }}/{{ website_project_name }}"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0777

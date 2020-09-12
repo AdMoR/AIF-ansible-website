@@ -1,0 +1,19 @@
+---
+- hosts: all
+  become: no
+  tasks:
+    - name: "Include variables for config files"
+      include_vars: "dev_wagtail.yml"
+
+- hosts: all
+  become: no
+  tasks:
+    - name: "Include system vars"
+      include_vars: "ovh_system_config.yml"
+
+- hosts: all
+  become: true
+  roles:
+    - system_install_wagtail
+    - website_wagtail
+    - deploy_apps

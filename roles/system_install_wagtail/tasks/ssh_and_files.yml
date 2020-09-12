@@ -1,0 +1,33 @@
+---
+- name: "Create .ssh dir for {{ username }} user"
+  become: True
+  file:
+    path:   "/home/{{ username }}/.ssh"
+    state:  directory
+    owner:  "{{ username }}"
+    group:  "{{ username }}"
+    mode:   0700
+
+# This is used to allow user gunicorn to clone Github repositories for sources
+- name: "Set ssh key"
+  become: True
+  copy:
+    src:    "deploy_key{{ item }}"
+    dest:   "/home/{{ username }}/.ssh/id_rsa{{ item }}"
+    owner:  "{{ username }}"
+    group:  "{{ username }}"
+    mode:   0600
+  with_items:
+    - ""
+    - ".pub"
+
+- name: "Create directory for sources"
+  become: True
+  file:
+    path:   "{{ item }}"
+    state:  directory
+    owner:  "{{ username }}"
+    group:  "{{ username }}"
+    mode:   0755
+  with_items:
+    - "{{ app_dir }}"
